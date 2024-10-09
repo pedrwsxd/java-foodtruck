@@ -43,10 +43,7 @@ public class Pedido {
 	
 	private BigDecimal total;
 	
-	public Pedido() {}
-	
 	public Pedido(Usuario cliente, List<Produto> produtos) {
-		
 		this.cliente = cliente;
 		this.produtos = produtos;
 		this.setStatus("Em preparo");
@@ -81,6 +78,4 @@ public class Pedido {
 	public void setTotal(BigDecimal total) {
 		this.total = total;
 	}
-	
-	
 }

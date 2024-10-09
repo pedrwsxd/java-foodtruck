@@ -16,44 +16,46 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Entity(name = "Usuario")
-
+@Entity
 public class Usuario {
 
-	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
 	private String nome;
-	
 	private String email;
-	
 	private String senha;
-	
-	private String role; 
-	
-	
+	private String role;
 	
 	public Usuario(DadosCadastroUsuario usuario) {
-		
 		this.setNome(usuario.nome());
 		this.setEmail(usuario.email());
 		this.setSenha(usuario.senha());
 		this.setRole(usuario.role());
-		
 	}
 	
-	
-	public Usuario() {}
-	
-	
-	public String getRole() {
-		return role;
+	public void atualizarInformacoes(@Valid DadosAtualizacaoUsuario dados) {
+		if(dados.nome() != null) {
+			this.setNome(dados.nome());
+		}
+		if(dados.email() != null) {
+			this.setEmail(dados.email());
+		}
+		if(dados.senha() != null) {
+			this.setSenha(dados.senha());
+		}
+		if(dados.role() != null) {
+			this.setRole(dados.role());
+		}
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public String getSenha() {
@@ -72,28 +74,11 @@ public class Usuario {
 		this.email = email;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getRole() {
+		return role;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	
-	public void atualizarinformacoes(@Valid DadosAtualizacaoUsuario dados) {
-		
-		if(dados.nome() != null) {
-			this.nome = dados.nome();
-		}
-		if(dados.email() != null) {
-			this.email = dados.email();
-		}
-		if(dados.senha() != null) {
-			this.senha = dados.senha();
-		}
-		if(dados.role() != null) {
-			this.role = dados.role();
-		}
-		
+	public void setRole(String role) {
+		this.role = role;
 	}
 }
