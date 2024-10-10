@@ -2,11 +2,11 @@ package br.projeto.spring.produto;
 
 import java.math.BigDecimal;
 
-import br.projeto.spring.usuario.DadosAtualizacaoUsuario;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -19,30 +19,50 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Entity
+@Table(name = "produtos")
+@Entity(name = "Produto")
 public class Produto {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	private String nome;
-	
-	private BigDecimal preco;
-	
-	private String tipo;
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nome;
+
+    private BigDecimal preco;
+
+    private String tipo;
+
 	private String sabor;
-	
-	public Produto() {}
-	
-	public Produto(DadosCadastroProduto produto) {
-		    
-		this.setNome(produto.nome());
-		this.setPreco(produto.preco());
-		this.setTipo(produto.tipo());
-		this.setSabor(produto.sabor());
-		
+
+    public Produto(DadosCadastroProduto produto) {
+        this.setNome(produto.nome());
+        this.setPreco(produto.preco());
+        this.setTipo(produto.tipo());
+        this.setSabor(produto.sabor());
+    }
+
+    public void atualizarInformacoes(@Valid DadosAtualizacaoProduto dados) {
+        if (dados.nome() != null) {
+            this.setNome(dados.nome());
+        }
+        if (dados.preco() != null) {
+            this.setPreco(dados.preco());
+        }
+        if (dados.tipo() != null) {
+            this.setTipo(dados.tipo());
+        }
+        if (dados.sabor() != null) {
+            this.setSabor(dados.sabor());
+        }
+    }
+
+	public BigDecimal getPreco() {
+		return preco;
+	}
+
+	public void setPreco(BigDecimal preco) {
+		this.preco = preco;
 	}
 
 	public String getNome() {
@@ -51,14 +71,6 @@ public class Produto {
 
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-
-	public BigDecimal getPreco() {
-		return preco;
-	}
-
-	public void setPreco(BigDecimal preco) {
-		this.preco = preco;
 	}
 
 	public String getTipo() {
@@ -76,20 +88,4 @@ public class Produto {
 	public void setSabor(String sabor) {
 		this.sabor = sabor;
 	}
-	
-    public void atualizarinformacoes(@Valid DadosAtualizacaoProduto dados) {
-		
-		if(dados.nome() != null) {
-			this.nome = dados.nome();
-		}
-		if(dados.preco() != null) {
-			this.preco = dados.preco();
-		}
-		if(dados.tipo() != null) {
-			this.tipo = dados.tipo();
-		}
-		if(dados.sabor() != null) {
-			this.sabor = dados.sabor();
-		}
-    }
 }

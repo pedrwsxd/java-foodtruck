@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -16,7 +17,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Entity
+@Entity(name = "Usuario")
+@Table(name = "usuarios")
 public class Usuario {
 
 	@Id
@@ -35,6 +37,10 @@ public class Usuario {
 		this.setRole(usuario.role());
 	}
 	
+	public Usuario() {
+		super();
+	}
+
 	public void atualizarInformacoes(@Valid DadosAtualizacaoUsuario dados) {
 		if(dados.nome() != null) {
 			this.setNome(dados.nome());

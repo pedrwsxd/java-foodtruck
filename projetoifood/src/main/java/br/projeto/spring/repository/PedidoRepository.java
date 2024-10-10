@@ -5,8 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import br.projeto.spring.pedido.Pedido;
 
-
-
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long>{
 
