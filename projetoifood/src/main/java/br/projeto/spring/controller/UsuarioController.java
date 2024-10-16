@@ -16,7 +16,7 @@ import java.util.List;
 public class UsuarioController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    UsuarioRepository usuarioRepository;
 
     @PostMapping("/add")
     public ResponseEntity<Usuario> criarUsuario(@RequestBody DadosCadastroUsuario dados) {
@@ -38,15 +38,12 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/atualizar/{id}")
     public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id, @RequestBody DadosAtualizacaoUsuario dados) {
-        return usuarioRepository.findById(id)
-                .map(usuario -> {
-                    usuario.atualizarInformacoes(dados);
-                    usuarioRepository.save(usuario);
-                    return ResponseEntity.ok(usuario);
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return usuarioRepository.findById(id).map(usuario -> {usuario.atualizarInformacoes(dados);
+            usuarioRepository.save(usuario);
+            return ResponseEntity.ok(usuario);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

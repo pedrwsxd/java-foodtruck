@@ -1,121 +1,98 @@
 package br.projeto.spring.pedido;
 
+import br.projeto.spring.produto.Produto;
+import br.projeto.spring.usuario.Usuario;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import br.projeto.spring.produto.Produto;
-import br.projeto.spring.repository.ProdutoRepository;
-import br.projeto.spring.repository.UsuarioRepository;
-import br.projeto.spring.usuario.Usuario;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(of = "id")
-@Entity(name = "Pedido")
+@Entity
 @Table(name = "pedidos")
 public class Pedido {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	private String status;
-	
-	private LocalDateTime dataPedido;
-	
-	@ManyToOne
-	private Usuario cliente;
-	
-	@ManyToMany
-	private List<Produto> produtos = new ArrayList<>();
-	
-	private BigDecimal total;
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String status;
+    private LocalDateTime dataPedido;
 
-	@Autowired
-	private ProdutoRepository produtoRepository;
-	private UsuarioRepository usuarioRepository;
-	
-	public Pedido(Usuario cliente, List<Produto> produtos) {
-		this.cliente = cliente;
-		this.produtos = produtos;
-		this.setStatus("Em preparo");
-		this.setDataPedido(LocalDateTime.now());
-		this.setTotal(calcularTotal());
-	}
-	
-	public BigDecimal calcularTotal() {
-		return produtos.stream().map(Produto::getPreco).reduce(BigDecimal.ZERO, BigDecimal::add);
-	}
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Usuario cliente;
 
-	public String getStatus() {
-		return status;
-	}
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Produto> produtos = new ArrayList<>();
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    private BigDecimal total;
 
-	public LocalDateTime getDataPedido() {
-		return dataPedido;
-	}
+    // Construtor
+    public Pedido(Usuario cliente, List<Produto> produtos) {
+        this.cliente = cliente;
+        this.produtos = produtos;
+        this.setStatus("Em preparo");
+        this.setDataPedido(LocalDateTime.now());
+        this.setTotal(this.calcularTotal());
+    }
 
-	public void setDataPedido(LocalDateTime dataPedido) {
-		this.dataPedido = dataPedido;
-	}
+    public Pedido() {
 
-	public BigDecimal getTotal() {
-		return total;
-	}
+    }
 
-	public void setTotal(BigDecimal total) {
-		this.total = total;
-	}
+    // Método para atualizar informações
+    public void atualizarInformacoes(@Valid DadosAtualizacaoPedido dadosAtualizacaoPedido) {
+        if (dadosAtualizacaoPedido.status() != null) {
+            this.setStatus(dadosAtualizacaoPedido.status());
+        }
+        if (dadosAtualizacaoPedido.produtos() != null) {
+            this.produtos = dadosAtualizacaoPedido.produtos();
+            this.setTotal(calcularTotal()); // Recalcula o total quando os produtos são atualizados
+        }
+        if (dadosAtualizacaoPedido.dataPedido() != null) {
+            this.setDataPedido(dadosAtualizacaoPedido.dataPedido());
+        }
+    }
 
-	
-	public void atualizarInformacoes(@Valid DadosAtualizacaoPedido dados) {
-		  if (dados.status() != null) {
-		        this.status = dados.status();
-		    }
-		    if (dados.dataPedido() != null) {
-		        this.dataPedido = dados.dataPedido();
-		    }
-		    if (dados.cliente() != null) {
-		     this.cliente = usuarioRepository.findById(dados.cliente())
-		      .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
-		    }
-		    if (dados.produtos() != null && !dados.produtos().isEmpty()) {
-		        // Caso queira atualizar a lista de produtos
-		        List<Produto> novosProdutos = new ArrayList<>();
-		        for (Long produtoId : dados.produtos()) {
-		            Produto produto = produtoRepository.findById(produtoId)
-		                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-		            novosProdutos.add(produto);
-		        }
-		        this.produtos = novosProdutos;
-		        this.total = calcularTotal(); // Atualiza o total com os novos produtos
-		    }
-	}
+    // Métodos auxiliares (getters e setters)
+    private void setStatus(String status) {
+        this.status = status;
+    }
 
+    private void setDataPedido(LocalDateTime dataPedido) {
+        this.dataPedido = dataPedido;
+    }
+
+    private void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    // Método para calcular o total do pedido
+    public BigDecimal calcularTotal() {
+        return this.produtos.stream()
+                .map(Produto::getPreco)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+    public String getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getDataPedido() {
+        return dataPedido;
+    }
+
+    public Usuario getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Usuario cliente) {
+        this.cliente = cliente;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
 }
-
-

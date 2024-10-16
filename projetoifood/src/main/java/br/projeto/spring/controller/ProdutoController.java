@@ -16,7 +16,7 @@ import java.util.List;
 public class ProdutoController {
 
     @Autowired
-    private ProdutoRepository produtoRepository;
+    ProdutoRepository produtoRepository;
 
     @PostMapping("/add")
     public ResponseEntity<Produto> criarProduto(@RequestBody DadosCadastroProduto dados) {

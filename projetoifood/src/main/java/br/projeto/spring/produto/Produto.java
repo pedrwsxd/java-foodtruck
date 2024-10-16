@@ -35,6 +35,9 @@ public class Produto {
 
 	private String sabor;
 
+    // Campo para indicar se o produto está ativo ou não
+    private boolean ativo;
+
     public Produto(DadosCadastroProduto produto) {
         this.setNome(produto.nome());
         this.setPreco(produto.preco());
@@ -88,4 +91,12 @@ public class Produto {
 	public void setSabor(String sabor) {
 		this.sabor = sabor;
 	}
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
 }

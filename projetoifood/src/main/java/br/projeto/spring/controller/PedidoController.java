@@ -1,83 +1,79 @@
 package br.projeto.spring.controller;
 
-import br.projeto.spring.pedido.Pedido;
-import br.projeto.spring.produto.Produto;
-import br.projeto.spring.pedido.DadosCadastroPedido;
 import br.projeto.spring.pedido.DadosAtualizacaoPedido;
+import br.projeto.spring.pedido.DadosCadastroPedido;
+import br.projeto.spring.pedido.Pedido;
 import br.projeto.spring.repository.PedidoRepository;
 import br.projeto.spring.repository.ProdutoRepository;
 import br.projeto.spring.repository.UsuarioRepository;
 import br.projeto.spring.usuario.Usuario;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.util.List;
 
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
 
-    @Autowired
-    private PedidoRepository pedidoRepository;
-    
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-    
-    @Autowired
-    private ProdutoRepository produtoRepository;
+    private final PedidoRepository pedidoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final ProdutoRepository produtoRepository;
 
+    public PedidoController(PedidoRepository pedidoRepository, UsuarioRepository usuarioRepository, ProdutoRepository produtoRepository) {
+        this.pedidoRepository = pedidoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.produtoRepository = produtoRepository;
+    }
 
-    @PostMapping
-    public ResponseEntity<Pedido> cadastrarPedido(@RequestBody DadosCadastroPedido dados) {
-        Usuario cliente = usuarioRepository.findById(dados.cliente())
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+    // Criar um novo pedido (POST)
+    @PostMapping("/novopedido")
+    public ResponseEntity<Pedido> criarPedido(@RequestBody @Valid DadosCadastroPedido dados) {
+        var cliente = usuarioRepository.findById(dados.cliente())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado!"));
 
-        List<Produto> produtos = produtoRepository.findAllById(dados.produtos());
+        // Certifique-se de que está passando uma lista de IDs de produtos (List<Long>)
+        var produtos = produtoRepository.findAllById(dados.produtos());
 
-        // Verifica se a lista de produtos não está vazia
         if (produtos.isEmpty()) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(null);  // Verifica se a lista de produtos está vazia
         }
 
-        Pedido pedido = new Pedido(cliente, produtos);
-        pedidoRepository.save(pedido);
+        Pedido novoPedido = new Pedido(cliente, produtos);
+        pedidoRepository.save(novoPedido);
+
+        return ResponseEntity.ok(novoPedido);
+    }
+
+    // Buscar um pedido por ID (GET)
+    @GetMapping("/{id}")
+    public ResponseEntity<Pedido> buscarPedido(@PathVariable Long id) {
+        var pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado!"));
+
         return ResponseEntity.ok(pedido);
     }
 
-
-    @GetMapping("/listar")
-    public ResponseEntity<List<Pedido>> listarPedidos() {
-        List<Pedido> pedidos = pedidoRepository.findAll();
-        return ResponseEntity.ok(pedidos);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Pedido> obterPedido(@PathVariable Long id) {
-        return pedidoRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
+    // Atualizar um pedido (PUT)
     @PutMapping("/{id}")
-    public ResponseEntity<Pedido> atualizarPedido(@PathVariable Long id, @RequestBody DadosAtualizacaoPedido dados) {
-        return pedidoRepository.findById(id)
-                .map(pedido -> {
-                    pedido.atualizarInformacoes(dados);
-                    pedidoRepository.save(pedido);
-                    return ResponseEntity.ok(pedido);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Pedido> atualizarPedido(@PathVariable Long id, @RequestBody @Valid DadosAtualizacaoPedido dados) {
+        var pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado!"));
+
+        pedido.atualizarInformacoes(dados);
+        pedidoRepository.save(pedido);
+
+        return ResponseEntity.ok(pedido);
     }
 
+    // Excluir um pedido (DELETE)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarPedido(@PathVariable Long id) {
-        if (pedidoRepository.existsById(id)) {
-            pedidoRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        var pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado!"));
+
+        pedidoRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

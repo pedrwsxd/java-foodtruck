@@ -36,10 +36,6 @@ public class Usuario {
 		this.setSenha(usuario.senha());
 		this.setRole(usuario.role());
 	}
-	
-	public Usuario() {
-		super();
-	}
 
 	public void atualizarInformacoes(@Valid DadosAtualizacaoUsuario dados) {
 		if(dados.nome() != null) {
