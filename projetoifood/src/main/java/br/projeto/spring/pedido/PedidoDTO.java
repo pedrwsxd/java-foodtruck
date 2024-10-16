@@ -8,7 +8,7 @@ public record PedidoDTO(
         Long id,
         String status,
         LocalDateTime dataPedido,
-        Long clienteId, // ID do cliente sem a senha
+        Long cliente, // ID do cliente sem a senha
         List<Long> produtosIds, // IDs dos produtos
         BigDecimal total
 ) {

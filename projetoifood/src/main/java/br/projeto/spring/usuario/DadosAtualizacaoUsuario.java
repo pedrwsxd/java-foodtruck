@@ -1,5 +1,7 @@
 package br.projeto.spring.usuario;
 
+import br.projeto.spring.endereco.DadosEndereco;
+
 public record DadosAtualizacaoUsuario(
 		
 		Long id,
@@ -10,7 +12,9 @@ public record DadosAtualizacaoUsuario(
 		
 		String senha,
 		
-		String role 
+		String role,
+		
+		DadosEndereco endereco
 		) {
 
 }

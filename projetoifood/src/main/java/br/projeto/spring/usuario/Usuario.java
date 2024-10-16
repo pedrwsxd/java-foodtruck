@@ -1,5 +1,10 @@
 package br.projeto.spring.usuario;
 
+import br.projeto.spring.endereco.Endereco;
+import jakarta.persistence.Embedded;
+
+
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,11 +35,19 @@ public class Usuario {
 	private String senha;
 	private String role;
 	
+    @Embedded
+    private Endereco endereco;
+	
 	public Usuario(DadosCadastroUsuario usuario) {
 		this.setNome(usuario.nome());
 		this.setEmail(usuario.email());
 		this.setSenha(usuario.senha());
 		this.setRole(usuario.role());
+		this.endereco = new Endereco(usuario.endereco());
+	}
+	
+	public Usuario() {
+		
 	}
 
 	public void atualizarInformacoes(@Valid DadosAtualizacaoUsuario dados) {
@@ -49,6 +62,9 @@ public class Usuario {
 		}
 		if(dados.role() != null) {
 			this.setRole(dados.role());
+		}
+		if(dados.endereco() != null) {
+			this.endereco.atualizarInformacoes(dados.endereco());
 		}
 	}
 
@@ -71,6 +87,11 @@ public class Usuario {
 	public String getEmail() {
 		return email;
 	}
+	
+	public Endereco getEndereco() {
+		
+		return endereco;
+	}
 
 	public void setEmail(String email) {
 		this.email = email;
@@ -82,5 +103,9 @@ public class Usuario {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public Long getId() {
+		return id;
 	}
 }

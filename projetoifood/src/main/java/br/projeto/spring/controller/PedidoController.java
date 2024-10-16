@@ -3,6 +3,8 @@ package br.projeto.spring.controller;
 import br.projeto.spring.pedido.DadosAtualizacaoPedido;
 import br.projeto.spring.pedido.DadosCadastroPedido;
 import br.projeto.spring.pedido.Pedido;
+import br.projeto.spring.pedido.PedidoDTO;
+import br.projeto.spring.produto.Produto;
 import br.projeto.spring.repository.PedidoRepository;
 import br.projeto.spring.repository.ProdutoRepository;
 import br.projeto.spring.repository.UsuarioRepository;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -29,21 +32,29 @@ public class PedidoController {
 
     // Criar um novo pedido (POST)
     @PostMapping("/novopedido")
-    public ResponseEntity<Pedido> criarPedido(@RequestBody @Valid DadosCadastroPedido dados) {
+    public ResponseEntity<PedidoDTO> criarPedido(@RequestBody @Valid DadosCadastroPedido dados) {
         var cliente = usuarioRepository.findById(dados.cliente())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado!"));
 
-        // Certifique-se de que está passando uma lista de IDs de produtos (List<Long>)
         var produtos = produtoRepository.findAllById(dados.produtos());
 
         if (produtos.isEmpty()) {
-            return ResponseEntity.badRequest().body(null);  // Verifica se a lista de produtos está vazia
+            return ResponseEntity.badRequest().body(null);
         }
 
         Pedido novoPedido = new Pedido(cliente, produtos);
         pedidoRepository.save(novoPedido);
 
-        return ResponseEntity.ok(novoPedido);
+        PedidoDTO pedidoDTO = new PedidoDTO(
+                novoPedido.getId(),
+                novoPedido.getStatus(),
+                novoPedido.getDataPedido(),
+                novoPedido.getCliente().getId(),
+                novoPedido.getProdutos().stream().map(produto -> produto.getId()).collect(Collectors.toList()),
+                novoPedido.getTotal()
+        );
+
+        return ResponseEntity.ok(pedidoDTO);
     }
 
     // Buscar um pedido por ID (GET)

@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,8 +30,10 @@ public class Produto {
     private Long id;
 
     private String nome;
+    
+	private String imagemUrl; // URL da imagem do produto
 
-    private BigDecimal preco;
+	private BigDecimal preco;
 
     private String tipo;
 
@@ -43,6 +47,7 @@ public class Produto {
         this.setPreco(produto.preco());
         this.setTipo(produto.tipo());
         this.setSabor(produto.sabor());
+        this.setImagemUrl(produto.imagemUrl());
     }
 
     public void atualizarInformacoes(@Valid DadosAtualizacaoProduto dados) {
@@ -58,6 +63,17 @@ public class Produto {
         if (dados.sabor() != null) {
             this.setSabor(dados.sabor());
         }
+        if (dados.imagemUrl() != null) {
+            this.setImagemUrl(dados.imagemUrl());
+        }
+    }
+    
+    Produto(){
+    	
+    }
+    
+    public Long getId(){
+    	return id;
     }
 
 	public BigDecimal getPreco() {
@@ -66,6 +82,14 @@ public class Produto {
 
 	public void setPreco(BigDecimal preco) {
 		this.preco = preco;
+	}
+	
+	public String getImagemUrl() {
+		return imagemUrl;
+	}
+	
+	public void setImagemUrl( String string) {
+		this.imagemUrl = string;
 	}
 
 	public String getNome() {
@@ -99,4 +123,6 @@ public class Produto {
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
+
+
 }

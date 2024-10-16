@@ -7,7 +7,8 @@ import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List; 
+
 
 @Entity
 @Table(name = "pedidos")
@@ -24,9 +25,20 @@ public class Pedido {
     private Usuario cliente;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Produto> produtos = new ArrayList<>();
+    private List<Produto> produtos;
 
     private BigDecimal total;
+
+    public Pedido(Long id, String status, LocalDateTime dataPedido, Usuario cliente, List<Produto> produtos,
+                   BigDecimal total) {
+        super();
+        this.id = id;
+        this.status = status;
+        this.dataPedido = dataPedido;
+        this.cliente = cliente;
+        this.produtos = produtos;
+        this.total = total;
+    }
 
     // Construtor
     public Pedido(Usuario cliente, List<Produto> produtos) {
@@ -38,7 +50,7 @@ public class Pedido {
     }
 
     public Pedido() {
-
+        this.produtos = new ArrayList<>(); // Inicializa a lista de produtos
     }
 
     // Método para atualizar informações
@@ -92,7 +104,15 @@ public class Pedido {
         this.cliente = cliente;
     }
 
-    public BigDecimal getTotal() {
+    public BigDecimal getTotal(){
         return total;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public List<Produto> getProdutos() { // Corrigido o tipo de retorno
+        return produtos;
     }
 }

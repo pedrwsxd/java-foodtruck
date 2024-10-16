@@ -10,6 +10,9 @@ public record DadosCadastroProduto(
 		@NotBlank
 		String nome,
 		
+		@NotBlank
+		String imagemUrl,
+		
 		@NotNull
 		BigDecimal preco,
 		
