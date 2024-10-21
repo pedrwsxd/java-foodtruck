@@ -1,9 +1,0 @@
-CREATE TABLE usuarios(
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    senha VARCHAR(100) NOT NULL,
-    role VARCHAR(50) NOT NULL
-);
-
-
