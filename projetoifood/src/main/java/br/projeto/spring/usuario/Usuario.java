@@ -45,10 +45,6 @@ public class Usuario {
 		this.setRole(usuario.role());
 		this.endereco = new Endereco(usuario.endereco());
 	}
-	
-	public Usuario() {
-		
-	}
 
 	public void atualizarInformacoes(@Valid DadosAtualizacaoUsuario dados) {
 		if(dados.nome() != null) {

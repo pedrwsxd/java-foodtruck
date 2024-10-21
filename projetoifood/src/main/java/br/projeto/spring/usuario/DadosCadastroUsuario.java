@@ -1,27 +1,24 @@
 package br.projeto.spring.usuario;
 
-
-
 import br.projeto.spring.endereco.DadosEndereco;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public record DadosCadastroUsuario(
 
-		@NotBlank 
+		@NotBlank
 		String nome,
 
-		@NotBlank 
+		@NotBlank
 		String email,
 
-		@NotBlank 
+		@NotBlank
 		String senha,
 
-		@NotBlank 
+		@NotBlank
 		String role,
 
-		@NotNull @Valid 
+		@Valid
 		DadosEndereco endereco
 
 ) {

@@ -10,46 +10,46 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Endereco {
-	
-	 private String logradouro;
-	 private String bairro;
-	 private String cep;
-	 private String cidade;
-	 private String numero;
-	 private String complemento;
 
-	 public Endereco (DadosEndereco dados) {
-		 
-		 this.setLogradouro(dados.logradouro());
-		 this.setNumero(dados.numero());
-		 this.setBairro(dados.bairro());
-		 this.setCep(dados.cep());
+	private String logradouro;
+	private String bairro;
+	private String cep;
+	private String cidade;
+	private String numero;
+	private String complemento;
 
-		 this.setCidade(dados.cidade());
-		 this.setComplemento(dados.complemento());
-	 }
+	public Endereco (DadosEndereco dados) {
+
+		this.setLogradouro(dados.logradouro());
+		this.setNumero(dados.numero());
+		this.setBairro(dados.bairro());
+		this.setCep(dados.cep());
+
+		this.setCidade(dados.cidade());
+		this.setComplemento(dados.complemento());
+	}
 
 	public void atualizarInformacoes(DadosEndereco dados) {
-		
-		  if(dados.logradouro() != null) {
-		    	 this.setLogradouro(dados.logradouro());
-		     }
-				
-		     if(dados.bairro() != null) {
-		    	 this.setBairro(dados.bairro());
-		     }
-		     
-		     if(dados.cep() != null) {
-		    	 this.setCep(dados.cep());
-		     }
-		     
-		     if(dados.cidade() != null) {
-		    	 this.setCidade(dados.cidade());
-		     }
-		     if(dados.numero() != null) {
-		    	 this.setNumero(dados.numero());
-		     }
-		
+
+		if(dados.logradouro() != null) {
+			this.setLogradouro(dados.logradouro());
+		}
+
+		if(dados.bairro() != null) {
+			this.setBairro(dados.bairro());
+		}
+
+		if(dados.cep() != null) {
+			this.setCep(dados.cep());
+		}
+
+		if(dados.cidade() != null) {
+			this.setCidade(dados.cidade());
+		}
+		if(dados.numero() != null) {
+			this.setNumero(dados.numero());
+		}
+
 	}
 
 	public String getLogradouro() {

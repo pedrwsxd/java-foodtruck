@@ -68,10 +68,6 @@ public class Produto {
         }
     }
     
-    Produto(){
-    	
-    }
-    
     public Long getId(){
     	return id;
     }
