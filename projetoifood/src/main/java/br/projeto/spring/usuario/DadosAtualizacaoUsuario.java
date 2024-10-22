@@ -12,9 +12,7 @@ public record DadosAtualizacaoUsuario(
 
 		String senha,
 
-		String role,
-
-		DadosEndereco endereco
+		String role
 ) {
 
 }

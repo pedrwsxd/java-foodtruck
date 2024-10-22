@@ -16,10 +16,7 @@ public record DadosCadastroUsuario(
 		String senha,
 
 		@NotBlank
-		String role,
-
-		@Valid
-		DadosEndereco endereco
+		String role
 
 ) {
 

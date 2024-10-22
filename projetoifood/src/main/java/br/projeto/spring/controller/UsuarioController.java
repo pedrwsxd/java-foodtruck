@@ -18,6 +18,11 @@ public class UsuarioController {
     @Autowired
     UsuarioRepository usuarioRepository;
 
+    @GetMapping
+    public ResponseEntity<String> getUser(){
+        return ResponseEntity.ok("sucesso!");
+    }
+
     @PostMapping("/add")
     public ResponseEntity<Usuario> criarUsuario(@RequestBody DadosCadastroUsuario dados) {
         Usuario usuario = new Usuario(dados);

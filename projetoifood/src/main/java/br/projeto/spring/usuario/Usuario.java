@@ -35,15 +35,14 @@ public class Usuario {
 	private String senha;
 	private String role;
 	
-    @Embedded
-    private Endereco endereco;
+
 	
 	public Usuario(DadosCadastroUsuario usuario) {
 		this.setNome(usuario.nome());
 		this.setEmail(usuario.email());
 		this.setSenha(usuario.senha());
 		this.setRole(usuario.role());
-		this.endereco = new Endereco(usuario.endereco());
+
 	}
 
 	public void atualizarInformacoes(@Valid DadosAtualizacaoUsuario dados) {
@@ -59,9 +58,7 @@ public class Usuario {
 		if(dados.role() != null) {
 			this.setRole(dados.role());
 		}
-		if(dados.endereco() != null) {
-			this.endereco.atualizarInformacoes(dados.endereco());
-		}
+
 	}
 
 	public String getNome() {
@@ -82,11 +79,6 @@ public class Usuario {
 
 	public String getEmail() {
 		return email;
-	}
-	
-	public Endereco getEndereco() {
-		
-		return endereco;
 	}
 
 	public void setEmail(String email) {
