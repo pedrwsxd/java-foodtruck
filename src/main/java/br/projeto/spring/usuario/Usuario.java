@@ -1,21 +1,16 @@
 package br.projeto.spring.usuario;
 
 import br.projeto.spring.endereco.Endereco;
-import jakarta.persistence.Embedded;
-
-
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import br.projeto.spring.roles.Role;
+import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,40 +22,44 @@ import lombok.Setter;
 public class Usuario {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-	
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "usuarios_roles",
+			joinColumns = @JoinColumn(name = "usuario_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles;  // Papéis do usuário
+
 	private String nome;
 	private String email;
 	private String senha;
-	private String role;
-	
 
-	
+	// Construtor baseado nos dados do DTO DadosCadastroUsuario
 	public Usuario(DadosCadastroUsuario usuario) {
 		this.setNome(usuario.nome());
 		this.setEmail(usuario.email());
 		this.setSenha(usuario.senha());
-		this.setRole(usuario.role());
-
 	}
 
+	// Método para atualizar as informações do usuário
 	public void atualizarInformacoes(@Valid DadosAtualizacaoUsuario dados) {
-		if(dados.nome() != null) {
+		if (dados.nome() != null) {
 			this.setNome(dados.nome());
 		}
-		if(dados.email() != null) {
+		if (dados.email() != null) {
 			this.setEmail(dados.email());
 		}
-		if(dados.senha() != null) {
+		if (dados.senha() != null) {
 			this.setSenha(dados.senha());
 		}
-		if(dados.role() != null) {
-			this.setRole(dados.role());
+		if (dados.roles() != null && !dados.roles().isEmpty()) {
+			this.setRoles(dados.roles());
 		}
-
 	}
 
+	// Getters e Setters (esses podem ser omitidos se você estiver usando Lombok corretamente)
 	public String getNome() {
 		return nome;
 	}
@@ -85,15 +84,15 @@ public class Usuario {
 		this.email = email;
 	}
 
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
 	public Long getId() {
 		return id;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 }
