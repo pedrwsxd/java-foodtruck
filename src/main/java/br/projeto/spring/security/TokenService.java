@@ -20,22 +20,22 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    // Geração de token JWT com informações do usuário, incluindo o papel (role)
     public String generateToken(Usuario usuario) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
-            // Obtém os papéis (roles) do usuário e transforma em uma string separada por vírgula
+
             Set<String> roles = usuario.getRoles()
                     .stream()
-                    .map(role -> role.getNome()) // Pega o nome do papel (ROLE_ADMIN ou ROLE_CLIENTE)
+                    .map(role -> role.getNome())
                     .collect(Collectors.toSet());
 
-            // Gera o token JWT com o email e os papéis do usuário
+
             return JWT.create()
                     .withIssuer("login-auth-api")
                     .withSubject(usuario.getEmail())
-                    .withClaim("roles", String.join(",", roles)) // Inclui os papéis no token
+                    .withClaim("roles", String.join(",", roles))
+                    .withClaim("id", usuario.getId())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
 
@@ -44,7 +44,7 @@ public class TokenService {
         }
     }
 
-    // Validação do token JWT, verificando o email e os papéis
+
     public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -56,16 +56,16 @@ public class TokenService {
                     .getSubject();
 
         } catch (JWTVerificationException exception) {
-            return null; // Retorna null se o token for inválido
+            return null;
         }
     }
 
-    // Gera a data de expiração do token (2 horas a partir da criação)
+
     private Instant generateExpirationDate() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 
-    // Extrai os papéis do token
+
     public Set<String> getRolesFromToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);

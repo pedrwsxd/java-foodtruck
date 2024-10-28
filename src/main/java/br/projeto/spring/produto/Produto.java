@@ -10,16 +10,19 @@ import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Table(name = "produtos")
 @Entity(name = "Produto")
@@ -29,18 +32,24 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(max = 255)
     private String nome;
-    
-	private String imagemUrl; // URL da imagem do produto
 
+    @Size(max = 255)
+	private String imagemUrl;
+
+    @NotNull
+    @PositiveOrZero
 	private BigDecimal preco;
 
+    @Size(max = 255)
     private String tipo;
 
+    @Size(max = 255)
 	private String sabor;
 
-    // Campo para indicar se o produto está ativo ou não
-    private boolean ativo;
+    private boolean ativo = true;
 
     public Produto(DadosCadastroProduto produto) {
         this.setNome(produto.nome());
@@ -50,6 +59,9 @@ public class Produto {
         this.setImagemUrl(produto.imagemUrl());
     }
 
+    public Produto() {
+    	
+    }
     public void atualizarInformacoes(@Valid DadosAtualizacaoProduto dados) {
         if (dados.nome() != null) {
             this.setNome(dados.nome());

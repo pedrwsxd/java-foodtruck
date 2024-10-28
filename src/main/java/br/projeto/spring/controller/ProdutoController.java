@@ -1,8 +1,8 @@
 package br.projeto.spring.controller;
 
-import br.projeto.spring.produto.Produto;
-import br.projeto.spring.produto.DadosCadastroProduto;
 import br.projeto.spring.produto.DadosAtualizacaoProduto;
+import br.projeto.spring.produto.DadosCadastroProduto;
+import br.projeto.spring.produto.Produto;
 import br.projeto.spring.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/produtos")
@@ -31,14 +32,14 @@ public class ProdutoController {
         return ResponseEntity.ok(produtos);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("listar/{id}")
     public ResponseEntity<Produto> obterProduto(@PathVariable Long id) {
         return produtoRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("atualizar/{id}")
     public ResponseEntity<Produto> atualizarProduto(@PathVariable Long id, @RequestBody DadosAtualizacaoProduto dados) {
         return produtoRepository.findById(id)
                 .map(produto -> {
@@ -49,8 +50,9 @@ public class ProdutoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarProduto(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarProduto(@PathVariable("id") Long id) {
         if (produtoRepository.existsById(id)) {
             produtoRepository.deleteById(id);
             return ResponseEntity.noContent().build();

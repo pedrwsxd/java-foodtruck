@@ -13,6 +13,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -27,26 +32,46 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Acesso público
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/produtos/listar").permitAll()  // Ex: Listar produtos
 
-                        // Permissões baseadas em papéis
-                        .requestMatchers(HttpMethod.POST, "/produtos/**").hasRole("ADMIN")  // Ex: Adicionar produto (somente ADMIN)
-                        .requestMatchers(HttpMethod.PUT, "/produtos/**").hasRole("ADMIN")   // Ex: Atualizar produto (somente ADMIN)
-                        .requestMatchers(HttpMethod.DELETE, "/produtos/**").hasRole("ADMIN") // Ex: Remover produto (somente ADMIN)
-                        .requestMatchers(HttpMethod.GET, "/pedidos/**").hasAnyRole("ADMIN", "CLIENTE") // Ex: Visualizar pedidos
-                        .requestMatchers(HttpMethod.POST, "/pedidos/**").hasRole("CLIENTE") // Criar pedidos (somente CLIENTE)
+                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/produtos/listar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login/admin").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/produtos/add").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/produtos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/produtos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/produtos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "pedidos/usuario/**").hasRole("CLIENTE")
+                        .requestMatchers(HttpMethod.GET, "usuarios/listar/**").hasAnyRole("CLIENTE", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/produtos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/pedidos/**").hasRole("CLIENTE")
+                        .requestMatchers(HttpMethod.POST, "/pedidos/**").hasRole("CLIENTE")
 
-                        // Qualquer outra requisição precisa ser autenticada
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
+    }
+
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setExposedHeaders(List.of("Authorization"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean

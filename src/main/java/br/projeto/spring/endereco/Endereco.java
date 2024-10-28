@@ -1,103 +1,120 @@
 package br.projeto.spring.endereco;
 
-import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Embeddable //Usaremos essa anotação em uma classe para informar que essa classe  possui instancias que fazem parte de uma entidade
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Endereco {
 
-	private String logradouro;
-	private String bairro;
-	private String cep;
-	private String cidade;
-	private String numero;
-	private String complemento;
 
-	public Endereco (DadosEndereco dados) {
+    @NotBlank
+    @Size(max = 255)
+    private String logradouro;
 
-		this.setLogradouro(dados.logradouro());
-		this.setNumero(dados.numero());
-		this.setBairro(dados.bairro());
-		this.setCep(dados.cep());
+    @NotBlank
+    @Size(max = 255)
+    private String bairro;
 
-		this.setCidade(dados.cidade());
-		this.setComplemento(dados.complemento());
-	}
+    @NotBlank
+    @Pattern(regexp = "\\d{5}-\\d{3}")
+    private String cep;
 
-	public void atualizarInformacoes(DadosEndereco dados) {
+    @NotBlank
+    @Size(max = 255)
+    private String cidade;
 
-		if(dados.logradouro() != null) {
-			this.setLogradouro(dados.logradouro());
-		}
+    @NotBlank
+    @Size(max = 20)
+    private String numero;
 
-		if(dados.bairro() != null) {
-			this.setBairro(dados.bairro());
-		}
+    @Size(max = 255)
+    private String complemento;
 
-		if(dados.cep() != null) {
-			this.setCep(dados.cep());
-		}
+    public Endereco(DadosEndereco dados) {
 
-		if(dados.cidade() != null) {
-			this.setCidade(dados.cidade());
-		}
-		if(dados.numero() != null) {
-			this.setNumero(dados.numero());
-		}
+        this.setLogradouro(dados.logradouro());
+        this.setNumero(dados.numero());
+        this.setBairro(dados.bairro());
+        this.setCep(dados.cep());
+        this.setCidade(dados.cidade());
+        this.setComplemento(dados.complemento());
+    }
 
-	}
+    public void atualizarInformacoes(DadosEndereco dados) {
 
-	public String getLogradouro() {
-		return logradouro;
-	}
+        if (dados.logradouro() != null) {
+            this.setLogradouro(dados.logradouro());
+        }
 
-	public void setLogradouro(String logradouro) {
-		this.logradouro = logradouro;
-	}
+        if (dados.bairro() != null) {
+            this.setBairro(dados.bairro());
+        }
 
-	public String getBairro() {
-		return bairro;
-	}
+        if (dados.cep() != null) {
+            this.setCep(dados.cep());
+        }
 
-	public void setBairro(String bairro) {
-		this.bairro = bairro;
-	}
+        if (dados.cidade() != null) {
+            this.setCidade(dados.cidade());
+        }
+        if (dados.numero() != null) {
+            this.setNumero(dados.numero());
+        }
 
-	public String getCep() {
-		return cep;
-	}
+    }
 
-	public void setCep(String cep) {
-		this.cep = cep;
-	}
+    public String getLogradouro() {
+        return logradouro;
+    }
 
-	public String getComplemento() {
-		return complemento;
-	}
+    public void setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
+    }
 
-	public void setComplemento(String complemento) {
-		this.complemento = complemento;
-	}
+    public String getBairro() {
+        return bairro;
+    }
 
-	public String getCidade() {
-		return cidade;
-	}
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
+    }
 
-	public void setCidade(String cidade) {
-		this.cidade = cidade;
-	}
+    public String getCep() {
+        return cep;
+    }
 
-	public String getNumero() {
-		return numero;
-	}
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
 
-	public void setNumero(String numero) {
-		this.numero = numero;
-	}
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
 
 }

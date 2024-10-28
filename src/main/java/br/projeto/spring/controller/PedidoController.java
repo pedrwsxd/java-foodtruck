@@ -3,17 +3,18 @@ package br.projeto.spring.controller;
 import br.projeto.spring.pedido.DadosAtualizacaoPedido;
 import br.projeto.spring.pedido.DadosCadastroPedido;
 import br.projeto.spring.pedido.Pedido;
-import br.projeto.spring.pedido.PedidoDTO;
 import br.projeto.spring.produto.Produto;
+import br.projeto.spring.pedido.PedidoDTO;
 import br.projeto.spring.repository.PedidoRepository;
 import br.projeto.spring.repository.ProdutoRepository;
 import br.projeto.spring.repository.UsuarioRepository;
-import br.projeto.spring.usuario.Usuario;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/pedidos")
@@ -29,7 +30,6 @@ public class PedidoController {
         this.produtoRepository = produtoRepository;
     }
 
-    // Criar um novo pedido (POST)
     @PostMapping("/novopedido")
     public ResponseEntity<PedidoDTO> criarPedido(@RequestBody @Valid DadosCadastroPedido dados) {
         var cliente = usuarioRepository.findById(dados.cliente())
@@ -48,15 +48,36 @@ public class PedidoController {
                 novoPedido.getId(),
                 novoPedido.getStatus(),
                 novoPedido.getDataPedido(),
-                novoPedido.getCliente().getId(),
-                novoPedido.getProdutos().stream().map(produto -> produto.getId()).collect(Collectors.toList()),
+                novoPedido.getCliente().getNome(),
+                novoPedido.getProdutos().stream().map(Produto::getNome).collect(Collectors.toList()),
                 novoPedido.getTotal()
         );
 
         return ResponseEntity.ok(pedidoDTO);
     }
 
-    // Buscar um pedido por ID (GET)
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<PedidoDTO>> listarPedidosDoUsuario(@PathVariable Long usuarioId) {
+        var usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
+
+        var pedidos = pedidoRepository.findByCliente(usuario);
+
+        var pedidosDTO = pedidos.stream()
+                .map(pedido -> new PedidoDTO(
+                        pedido.getId(),
+                        pedido.getStatus(),
+                        pedido.getDataPedido(),
+                        pedido.getCliente().getNome(), // Obtém o nome do cliente
+                        pedido.getProdutos().stream().map(Produto::getNome).collect(Collectors.toList()), // Obtém os nomes dos produtos
+                        pedido.getTotal()
+                ))
+                .collect(Collectors.toList());
+
+
+        return ResponseEntity.ok(pedidosDTO);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> buscarPedido(@PathVariable Long id) {
         var pedido = pedidoRepository.findById(id)
@@ -65,7 +86,6 @@ public class PedidoController {
         return ResponseEntity.ok(pedido);
     }
 
-    // Atualizar um pedido (PUT)
     @PutMapping("/{id}")
     public ResponseEntity<Pedido> atualizarPedido(@PathVariable Long id, @RequestBody @Valid DadosAtualizacaoPedido dados) {
         var pedido = pedidoRepository.findById(id)
@@ -77,7 +97,6 @@ public class PedidoController {
         return ResponseEntity.ok(pedido);
     }
 
-    // Excluir um pedido (DELETE)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarPedido(@PathVariable Long id) {
         var pedido = pedidoRepository.findById(id)
