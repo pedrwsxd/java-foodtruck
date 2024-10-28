@@ -16,6 +16,8 @@ public class Role implements Serializable {
 
     public Role() {}
 
+
+
     public Role(String nome) {
         this.nome = nome;
     }

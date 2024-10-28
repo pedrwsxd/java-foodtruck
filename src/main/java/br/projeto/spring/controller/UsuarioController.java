@@ -1,15 +1,16 @@
 package br.projeto.spring.controller;
 
-import br.projeto.spring.usuario.Usuario;
-import br.projeto.spring.usuario.DadosCadastroUsuario;
-import br.projeto.spring.usuario.DadosAtualizacaoUsuario;
 import br.projeto.spring.repository.UsuarioRepository;
+import br.projeto.spring.usuario.DadosAtualizacaoUsuario;
+import br.projeto.spring.usuario.DadosCadastroUsuario;
+import br.projeto.spring.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/usuarios")
@@ -19,7 +20,7 @@ public class UsuarioController {
     UsuarioRepository usuarioRepository;
 
     @GetMapping
-    public ResponseEntity<String> getUser(){
+    public ResponseEntity<String> getUser() {
         return ResponseEntity.ok("sucesso!");
     }
 
@@ -36,7 +37,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarios);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/listar/{id}")
     public ResponseEntity<Usuario> obterUsuario(@PathVariable Long id) {
         return usuarioRepository.findById(id)
                 .map(ResponseEntity::ok)
@@ -45,13 +46,14 @@ public class UsuarioController {
 
     @PutMapping("/atualizar/{id}")
     public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id, @RequestBody DadosAtualizacaoUsuario dados) {
-        return usuarioRepository.findById(id).map(usuario -> {usuario.atualizarInformacoes(dados);
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuario.atualizarInformacoes(dados);
             usuarioRepository.save(usuario);
             return ResponseEntity.ok(usuario);
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deletar/{id}")
     public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
         if (usuarioRepository.existsById(id)) {
             usuarioRepository.deleteById(id);

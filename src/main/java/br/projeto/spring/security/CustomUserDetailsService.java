@@ -22,14 +22,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Busca o usuário pelo email (username)
+
         Usuario usuario = this.usuarioRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // Converte os papéis (roles) do usuário para GrantedAuthority
+
         Collection<GrantedAuthority> authorities = mapRolesToAuthorities(usuario.getRoles());
 
-        // Retorna o UserDetails com email, senha e roles
+
         return new org.springframework.security.core.userdetails.User(
                 usuario.getEmail(),
                 usuario.getSenha(),
@@ -37,7 +37,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         );
     }
 
-    // Mapeia os papéis (roles) do usuário para GrantedAuthority
     private Collection<GrantedAuthority> mapRolesToAuthorities(Set<br.projeto.spring.roles.Role> roles) {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getNome()))

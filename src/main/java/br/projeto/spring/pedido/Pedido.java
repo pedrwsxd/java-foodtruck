@@ -4,6 +4,10 @@ import br.projeto.spring.produto.Produto;
 import br.projeto.spring.usuario.Usuario;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,21 +21,39 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
     private String status;
+
+    @NotNull
     private LocalDateTime dataPedido;
 
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
     private Usuario cliente;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "pedidos_produtos",
+            joinColumns = @JoinColumn(name = "pedido_id"),
+            inverseJoinColumns = @JoinColumn(name = "produtos_id")
+    )
     private List<Produto> produtos;
 
+    @NotNull
+    @PositiveOrZero
     private BigDecimal total;
 
-    public Pedido(Long id, String status, LocalDateTime dataPedido, Usuario cliente, List<Produto> produtos,
-                   BigDecimal total) {
-        super();
+    public Pedido(
+            Long id,
+            String status,
+            LocalDateTime dataPedido,
+            Usuario cliente,
+            List<Produto> produtos,
+            BigDecimal total
+    ) {
+
         this.id = id;
         this.status = status;
         this.dataPedido = dataPedido;
@@ -50,7 +72,7 @@ public class Pedido {
     }
 
     public Pedido() {
-        this.produtos = new ArrayList<>(); // Inicializa a lista de produtos
+        this.produtos = new ArrayList<>();
     }
 
     // Método para atualizar informações
@@ -60,14 +82,21 @@ public class Pedido {
         }
         if (dadosAtualizacaoPedido.produtos() != null) {
             this.produtos = dadosAtualizacaoPedido.produtos();
-            this.setTotal(calcularTotal()); // Recalcula o total quando os produtos são atualizados
+            this.setTotal(calcularTotal());
         }
         if (dadosAtualizacaoPedido.dataPedido() != null) {
             this.setDataPedido(dadosAtualizacaoPedido.dataPedido());
         }
     }
 
-    // Métodos auxiliares (getters e setters)
+
+
+    public BigDecimal calcularTotal() {
+        return this.produtos.stream()
+                .map(Produto::getPreco)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
     private void setStatus(String status) {
         this.status = status;
     }
@@ -78,13 +107,6 @@ public class Pedido {
 
     private void setTotal(BigDecimal total) {
         this.total = total;
-    }
-
-    // Método para calcular o total do pedido
-    public BigDecimal calcularTotal() {
-        return this.produtos.stream()
-                .map(Produto::getPreco)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
 
