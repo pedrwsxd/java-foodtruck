@@ -37,19 +37,23 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
 
-                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/produtos/listar").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/auth/login/admin").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/produtos/add").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/produtos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/produtos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/produtos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/produtos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/produtos/**").hasRole("ADMIN")
+
+
                         .requestMatchers(HttpMethod.GET, "pedidos/usuario/**").hasRole("CLIENTE")
                         .requestMatchers(HttpMethod.GET, "usuarios/listar/**").hasAnyRole("CLIENTE", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/produtos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/pedidos/**").hasRole("CLIENTE")
+                        .requestMatchers(HttpMethod.PUT, "/usuarios/atualizar/").hasRole("CLIENTE")
+                        .requestMatchers(HttpMethod.GET, "/pedidos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/pedidos/**").hasRole("CLIENTE")
+
 
 
                         .anyRequest().authenticated()

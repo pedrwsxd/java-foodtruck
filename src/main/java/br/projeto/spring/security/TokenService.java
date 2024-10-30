@@ -79,4 +79,18 @@ public class TokenService {
             throw new RuntimeException("Erro ao tentar extrair roles do token", exception);
         }
     }
+
+    public Long getIdFromToken(String token) { // Método para extrair o ID do token
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.require(algorithm)
+                    .withIssuer("login-auth-api")
+                    .build()
+                    .verify(token)
+                    .getClaim("id")
+                    .asLong();
+        } catch (JWTVerificationException exception) {
+            throw new RuntimeException("Erro ao tentar extrair ID do token", exception);
+        }
+    }
 }

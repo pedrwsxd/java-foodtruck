@@ -11,6 +11,6 @@ public record DadosCadastroPedido(
         Long cliente,
 
         @NotEmpty
-        List<Long> produtos
+        List<ItemPedido> itensPedido // Alterado para List<ItemPedido>
 ) {
 }

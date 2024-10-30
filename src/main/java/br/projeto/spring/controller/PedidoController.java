@@ -1,10 +1,7 @@
 package br.projeto.spring.controller;
 
-import br.projeto.spring.pedido.DadosAtualizacaoPedido;
-import br.projeto.spring.pedido.DadosCadastroPedido;
-import br.projeto.spring.pedido.Pedido;
+import br.projeto.spring.pedido.*;
 import br.projeto.spring.produto.Produto;
-import br.projeto.spring.pedido.PedidoDTO;
 import br.projeto.spring.repository.PedidoRepository;
 import br.projeto.spring.repository.ProdutoRepository;
 import br.projeto.spring.repository.UsuarioRepository;
@@ -12,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +33,14 @@ public class PedidoController {
         var cliente = usuarioRepository.findById(dados.cliente())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado!"));
 
-        var produtos = produtoRepository.findAllById(dados.produtos());
+        List<Produto> produtos = new ArrayList<>();
+        for (ItemPedido item : dados.itensPedido()) {
+            var produto = produtoRepository.findById(item.getIdProduto())
+                    .orElseThrow(() -> new RuntimeException("Produto não encontrado!"));
+            for (int i = 0; i < item.getQuantidade(); i++) {
+                produtos.add(produto);
+            }
+        }
 
         if (produtos.isEmpty()) {
             return ResponseEntity.badRequest().body(null);
